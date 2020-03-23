@@ -2,7 +2,7 @@
 namespace luckydonald\phpUtils\exceptions;
 
 class PyFormatter {
-    static function python_like_exception(
+    static function exception(
         \Throwable $e, bool $skip_seen = true, ?array $seen = null
     ): string {
         if ($skip_seen && !$seen) {
@@ -10,18 +10,18 @@ class PyFormatter {
         }
         $prev  = $e->getPrevious();
         if ($prev) {
-            $result[] = self::python_like_exception($prev, $skip_seen, $seen);
+            $result[] = self::exception($prev, $skip_seen, $seen);
             $result[] = "\nDuring handling of the above exception, another exception occurred:\n";
         }
         $trace = $e->getTrace();
         // add the current line as well
         $trace = array_merge([["file" => $e->getFile(), "line" => $e->getLine(), "function" => null, "args" => null]], $trace);
-        $str = self::python_like_trace($trace, $skip_seen, $seen, "# Exception thrown");
+        $str = self::trace($trace, $skip_seen, $seen, "# Exception thrown");
         $str.= sprintf("\n%s: %s", get_class($e), $e->getMessage());
         return $str;
     }
 
-    static function python_like_trace(
+    static function trace(
         array $trace, bool $skip_seen = false, ?array $seen = null, string $end_message='# You are here.'
     ): string {
         if ($skip_seen && !$seen) {
