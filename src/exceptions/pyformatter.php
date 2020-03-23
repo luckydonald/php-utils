@@ -17,7 +17,7 @@ class PyFormatter {
         // add the current line as well
         $trace = array_merge([["file" => $e->getFile(), "line" => $e->getLine(), "function" => null, "args" => null]], $trace);
         $str = self::python_like_trace($trace, $skip_seen, $seen, "# Exception thrown");
-        $str.= sprintf('%s: %s', get_class($e), $e->getMessage());
+        $str.= sprintf("\n%s: %s", get_class($e), $e->getMessage());
         return $str;
     }
 
