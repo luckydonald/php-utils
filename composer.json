@@ -1,0 +1,22 @@
+{
+    "name": "luckydonald/php-utils",
+    "description": "A collection of usefull PHP code",
+    "version": "0.0.1",
+    "type": "library",
+    "require": {
+        "php": ">=7.3"
+    },
+    "license": "GNU Lesser General Public License v3.0",
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "luckydonald\\phpUtils\\": "src/"
+        },
+    },
+    "authors": [
+        {
+            "name": "luckydonald",
+            "email": "php-utils+composer+code@luckydonald.de"
+        }
+    ]
+}
