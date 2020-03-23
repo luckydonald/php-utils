@@ -3,7 +3,7 @@ namespace luckydonald\phpUtils\exceptions;
 
 class PyFormatter {
     static function python_like_exception(
-        Throwable $e, bool $skip_seen = true, ?array $seen = null
+        \Throwable $e, bool $skip_seen = true, ?array $seen = null
     ): string {
         if ($skip_seen && !$seen) {
             $seen = array();
