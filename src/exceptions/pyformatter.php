@@ -3,26 +3,26 @@ namespace luckydonald\phpUtils\exceptions;
 
 class PyFormatter {
     static function exception(
-        \Throwable $e, bool $skip_seen = true, ?array $seen = null
+        \Throwable $e, bool $show_data = false, bool $skip_seen = true, ?array $seen = null
     ): string {
         if ($skip_seen && !$seen) {
             $seen = array();
         }
         $prev  = $e->getPrevious();
         if ($prev) {
-            $result[] = self::exception($prev, $skip_seen, $seen);
+            $result[] = self::exception($prev, $show_data, $skip_seen, $seen);
             $result[] = "\nDuring handling of the above exception, another exception occurred:\n";
         }
         $trace = $e->getTrace();
         // add the current line as well
         $trace = array_merge([["file" => $e->getFile(), "line" => $e->getLine(), "function" => null, "args" => null]], $trace);
-        $str = self::trace($trace, $skip_seen, $seen, "# Exception thrown");
+        $str = self::trace($trace, $show_data,$skip_seen, $seen, "# Exception thrown");
         $str.= sprintf("\n%s: %s", get_class($e), $e->getMessage());
         return $str;
     }
 
     static function trace(
-        array $trace, bool $skip_seen = false, ?array $seen = null, string $end_message='# You are here.'
+        array $trace, bool $show_data = false, bool $skip_seen = false, ?array $seen = null, string $end_message='# You are here.'
     ): string {
         if ($skip_seen && !$seen) {
             $seen = array();
@@ -76,7 +76,7 @@ class PyFormatter {
                     $trace_count && array_key_exists('class', $stack) ? str_replace('\\', '.', $stack['class']) : '',
                     $trace_count && array_key_exists('class', $stack) && array_key_exists('function', $stack) ? (array_key_exists('type', $stack) ? $stack['type'] : '.') : '',  // dot only if function and class.
                     $trace_count && array_key_exists('function', $stack) && $stack['function'] ? str_replace('\\', '.', $stack['function']) : '{main}',
-                    $trace_count && array_key_exists('args', $stack) && $stack['args'] !== null ? implode(", ", array_map(function ($arg) use ($stack) {return implode('', array_map(function ($line) use ($stack) { return trim($line); }, explode("\n", @var_export($arg, true))));}, $stack['args'])) : '…'
+                    $show_data ? ($trace_count && array_key_exists('args', $stack) && $stack['args'] !== null ? implode(", ", array_map(function ($arg) use ($stack) {return implode('', array_map(function ($line) use ($stack) { return trim($line); }, explode("\n", @var_export($arg, true))));}, $stack['args'])) : '') : '…'
                 );
             } else {
                 $result[] = sprintf("    %s", $end_message);
