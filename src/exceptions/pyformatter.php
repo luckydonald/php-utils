@@ -13,9 +13,7 @@ class PyFormatter {
             $result[] = self::exception($prev, $show_data, $skip_seen, $seen);
             $result[] = "\nDuring handling of the above exception, another exception occurred:\n";
         }
-        $trace = $e->getTrace();
-        // add the current line as well
-        $trace = array_merge([["file" => $e->getFile(), "line" => $e->getLine(), "function" => null, "args" => null]], $trace);
+        $trace = self::exception_to_trace($e);
         $str = self::trace($trace, $show_data,$skip_seen, $seen, "# Exception thrown");
         $str.= sprintf("\n%s: %s", get_class($e), $e->getMessage());
         return $str;
@@ -93,5 +91,12 @@ class PyFormatter {
         }
         $result = join("\n", $result);
         return $result;
+    }
+
+    public function exception_to_trace(\Throwable $e): array {
+        $trace = $e->getTrace();
+        // add the current line as well
+        $trace = array_merge([["file" => $e->getFile(), "line" => $e->getLine(), "function" => null, "args" => null]], $trace);
+        return $trace;
     }
 }
