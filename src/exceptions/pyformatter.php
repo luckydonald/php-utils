@@ -93,7 +93,7 @@ class PyFormatter {
         return $result;
     }
 
-    public function exception_to_trace(\Throwable $e): array {
+    public static function exception_to_trace(\Throwable $e): array {
         $trace = $e->getTrace();
         // add the current line as well
         $trace = array_merge([["file" => $e->getFile(), "line" => $e->getLine(), "function" => null, "args" => null]], $trace);
