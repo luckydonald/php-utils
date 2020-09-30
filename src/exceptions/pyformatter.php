@@ -30,27 +30,30 @@ class PyFormatter {
         $trace_count = count($trace);
         $result[] = "Traceback (most recent call last):";
         $last_stack = null;
-        $current = null;
+        $current = null;  // only used if $skip_seen == True
         while ($trace_count > 0) {
             $stack = $trace[0];
 
-            $last_current = $current;
-            $current = serialize($stack);
-            if ($skip_seen && is_array($seen) && in_array($current, $seen) && in_array($last_current, $seen)) {
-                $duplications = 1;
-                while ($trace_count > 1) {
-                    $last_stack = $stack;
-                    $stack = $trace[0];
-                    $current = serialize($stack);
-                    if (!in_array($current, $seen)) {
-                        $result[] = sprintf('  ... %d more ...', $duplications + 1);
-                        break;
+            if ($skip_seen) {
+                $last_current = $current;
+                $current = print_r($stack, true);
+
+                if (is_array($seen) && in_array($current, $seen) && in_array($last_current, $seen)) {
+                    $duplications = 1;
+                    while ($trace_count > 1) {
+                        $last_stack = $stack;
+                        $stack = $trace[0];
+                        $current = print_r($stack, true);
+                        if (!in_array($current, $seen)) {
+                            $result[] = sprintf('  ... %d more ...', $duplications + 1);
+                            break;
+                        }
+                        $duplications++;
+                        array_shift($trace);
+                        $trace_count--;
                     }
-                    $duplications++;
-                    array_shift($trace);
-                    $trace_count--;
+                    echo "";
                 }
-                echo "";
             }
 
             //File "/Users/me/Desktop/exception_test.py", line 8, in foo
